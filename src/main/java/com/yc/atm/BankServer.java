@@ -33,6 +33,9 @@ public class BankServer {
                 unit, workQueue, threadFactory, handler);
         //预启动所有核心线程
         executor.prestartAllCoreThreads();
+
+
+
         //创建银行
         Bank b = new Bank();
         ServerSocket ss = new ServerSocket(12000);
