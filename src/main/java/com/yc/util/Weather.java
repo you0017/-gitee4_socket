@@ -82,6 +82,7 @@ public class Weather {
 
             // 格式化输出 JSON 字符串
             String prettyJsonString = JSON.toJSONString(newJsonObject, SerializerFeature.PrettyFormat);
+            System.out.println(prettyJsonString);
 
             return prettyJsonString;
         } catch (Exception e) {

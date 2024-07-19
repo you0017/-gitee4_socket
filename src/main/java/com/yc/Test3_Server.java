@@ -54,7 +54,7 @@ public class Test3_Server {
                  BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(oos, "UTF-8"))) {
 
 
-                String weather = Weather.weather("114.247.50.2");
+                String weather = Weather.weather(s.getInetAddress().getHostAddress());
                 writer.write(weather);
                 writer.flush();
             } catch (Exception e) {
