@@ -11,14 +11,16 @@ import java.net.URLConnection;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class Xunlei {
     private static Logger log = Logger.getLogger(Xunlei.class.getName());
 
     //volatile->修饰属性
-    public static volatile Long dlSize = 0l;
+    //public static volatile Long dlSize = 0l;
+    public static AtomicLong dlSize = new AtomicLong(0l);
 
-    public static void main(String[] args) throws Exception{
+    public static void main(String[] args) throws Exception {
         //String url = "http://yun.zfshx.com/uploads/2024/05/07/KpyUw6Pc_smee.7z";
         String url = "http://www.hostbuf.com/downloads/finalshell_install.exe";
         //1.获取要下载文件的大小
@@ -47,27 +49,39 @@ public class Xunlei {
 
         //6.循环创建线程，每个线程要下载自己的部分
         for (int i = 0; i < threadSize; i++) {
-            DownLoadTask task = new DownLoadTask(i, fileSize, threadSize,sizePerThread,url, downloadPath);
+            DownLoadTask task = new DownLoadTask(i, fileSize, threadSize, sizePerThread, url, downloadPath);
             Thread t = new Thread(task);
             t.start();
+        }
+        while (true) {
+            if (dlSize.get() == fileSize) {
+                log.info("下载完成");
+                System.out.println("总大小:"+dlSize.get());
+                break;
+            }else {
+                //log.info("\r"+"下载进度：" + dlSize + "，" + (dlSize * 100 / fileSize) + "%");
+                System.out.print("\r"+"下载进度：" + dlSize.get() + "，" + (dlSize.get() * 100 / fileSize) + "%");
+            }
+            Thread.sleep(50);
         }
     }
 
     /**
      * 计算每个线程要下载的字节数
+     *
      * @param fileSize
      * @param threadSize
      * @return
      */
     private static long getSizePerThread(long fileSize, int threadSize) {
 
-        return fileSize%threadSize==0?fileSize/threadSize:fileSize/threadSize+1;
+        return fileSize % threadSize == 0 ? fileSize / threadSize : fileSize / threadSize + 1;
     }
 
     /**
      * 根据日期和时间生成新文件的文件名
      */
-    private static String geFileName(String url){
+    private static String geFileName(String url) {
         Date d = new Date();
         DateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
         String prefix = df.format(d);
@@ -81,7 +95,7 @@ public class Xunlei {
     /**
      * 正是下载前，获取文件大小  "HEAD"
      */
-    private static long getDownloadFileSize(String url) throws Exception{
+    private static long getDownloadFileSize(String url) throws Exception {
         long fileSize = 0;
         URL u = new URL(url);
         HttpURLConnection con = (HttpURLConnection) u.openConnection();

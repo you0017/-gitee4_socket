@@ -62,8 +62,8 @@ public class DownLoadTask implements Runnable{
             while ((len = bis.read(bs)) != -1) {
                 raf.write(bs, 0, len);
                 //log.info("线程" + i + "下载了" + len + "字节");
-                Xunlei.dlSize += len;
-                System.out.println(Xunlei.dlSize);
+                Xunlei.dlSize.addAndGet(len);
+                //System.out.println(Xunlei.dlSize);
             }
             System.out.println();
             log.info("线程" + i + "下载完成");
