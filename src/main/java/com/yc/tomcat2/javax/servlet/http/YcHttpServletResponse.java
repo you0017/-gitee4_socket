@@ -60,6 +60,16 @@ public class YcHttpServletResponse implements YcServletResponse {
         }
     }
 
+    @Override
+    public OutputStream getOutputStream() {
+        return oos;
+    }
+
+    @Override
+    public PrintWriter getWriter() {
+        return new PrintWriter(oos);
+    }
+
     private String gen200(byte[] fileContent) {
         String protocol200 = "";
         //先取出请求的资源类型

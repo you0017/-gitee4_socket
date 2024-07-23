@@ -59,14 +59,14 @@ public class TaskService implements Runnable {
 
             //根据request中的URI来判断什么资源
             Processor processor = null;
-            if (YcServletContext.servletClass.containsKey(request.getRequestURI())){
+            if (YcServletContext.servletClass.containsKey(request.getRequestURI().replace(request.getContextPath(),""))){
                 processor = new DynamicProcessor();
             }else {
                 processor = new StaticProcessor();
             }
             processor.process(request,response);
 
-            response.send();
+            //response.send();
         }
         try {
             this.iis.close();
