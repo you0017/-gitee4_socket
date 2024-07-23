@@ -2,6 +2,10 @@ package com.yc.tomcat2;
 
 
 
+import com.yc.tomcat2.javax.DynamicProcessor;
+import com.yc.tomcat2.javax.Processor;
+import com.yc.tomcat2.javax.StaticProcessor;
+import com.yc.tomcat2.javax.servlet.YcServletContext;
 import com.yc.tomcat2.javax.servlet.http.YcHttpServletRequest;
 import com.yc.tomcat2.javax.servlet.http.YcHttpServletResponse;
 import org.apache.log4j.Logger;
@@ -53,6 +57,14 @@ public class TaskService implements Runnable {
             //响应,本地地址+资源地址uri，读取文件，拼接http响应  以流的形式回传给客户端
             YcHttpServletResponse response = new YcHttpServletResponse(request,this.oos);
 
+            //根据request中的URI来判断什么资源
+            Processor processor = null;
+            if (YcServletContext.servletClass.containsKey(request.getRequestURI())){
+                processor = new DynamicProcessor();
+            }else {
+                processor = new StaticProcessor();
+            }
+            processor.process(request,response);
 
             response.send();
         }

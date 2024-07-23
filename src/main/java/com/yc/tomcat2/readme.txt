@@ -25,8 +25,9 @@
             -> j2ee作用域对象
                 HttpServletRequest -> HttpSession -> ServletContext
 
-
+2.加入动态资源的请求处理
     1.访问路径的映射:
+        客户端:http://localhost:8090/wowotuan/hello
         实际访问的是一个servlet的class:  如 Hello.class
         但浏览器的地址栏是一个url : http://localhost:9090/wowotuan/Hello.do
         在这里简化处理做了一个约定·只要请求资源的后缀名为.do则表示是一个动态资源请求
@@ -47,8 +48,15 @@
                 </servlet>
 
             请求过来 -> tomcat 解析出requestURI -> web.xml看是否有这个映射 -> 有则示例化对应的servlet
+                                                                            生命周期：第一次请求  构造->init->service-> doXxx()
+                                                                                    第二次             service-> doXxx()
                                                                       ->没有·是否有这个对应的静态资源
                                                                       ->都没有·则显示404.html
 
     2.动静资源处理的分离
-        TaskService.java->doTask() -> 处理完请求·解析出 requestURI(hello.do/hello.html)  后
+        TaskService.java->doTask() -> 处理完请求·解析出 requestURI(hello.do/hello.html)  后,根据后缀名来判断静态还是动态
+        -> 分发处理(静态资源交给静态资源处理·动态资源交给动态资源处理器
+
+        我们这里会做一个资源处理接口Processor -> process()·如果解析出来的是动态资源·则使用DynamicProcessor对象·否则使用StaticProcessor对象
+
+        DynamicProcessor对象功能:

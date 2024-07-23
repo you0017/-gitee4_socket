@@ -23,6 +23,7 @@ public class YcHttpServletResponse implements YcServletResponse {
         this.oos = oos;
     }
 
+    @Override
     public void send() {
         String uri = request.getRequestURI();//  /wowotuan/index.html
         String realPath = request.getRealPath();    //服务器路径 webapps路径
