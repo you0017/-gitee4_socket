@@ -1,16 +1,15 @@
 package com.yc;
 
-import com.yc.util.Weather;
 import com.yc.util.WeatherUtil;
 import org.apache.log4j.Logger;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.URL;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 
 public class Test3_Server {
@@ -56,8 +55,28 @@ public class Test3_Server {
 
 
                 String weather = WeatherUtil.weather("衡阳");
-                writer.write(weather);
-                writer.flush();
+                try {
+                    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                    DocumentBuilder builder = factory.newDocumentBuilder();
+                    Document doc = builder.parse(new ByteArrayInputStream(weather.getBytes("UTF-8")));
+
+                    NodeList nodes = doc.getElementsByTagName("string");
+                    weather = "";
+                    for (int i = 0; i < nodes.getLength(); i++) {
+                        System.out.println(nodes.item(i).getTextContent());
+                        weather += nodes.item(i).getTextContent();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                //表明使用dom4j中的sax解析方式
+                //SAXReader saxReader = new SAXReader();
+                //writer.write(weather);
+                PrintWriter pw = new PrintWriter(writer);
+                pw.println(weather);
+                pw.flush();
+                //writer.flush();
             } catch (Exception e) {
                 e.printStackTrace();
             }

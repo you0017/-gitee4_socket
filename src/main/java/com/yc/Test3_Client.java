@@ -18,7 +18,7 @@ public class Test3_Client {
             System.out.println("客户端等待服务端的响应");
             while ((length=iis.read(bs,0,bs.length))!=-1){
                 String str = new String(bs,0,length, StandardCharsets.UTF_8);
-                System.out.println("服务端的响应："+str);
+                System.out.println(str);
             }
         }catch (Exception e){
             e.printStackTrace();
