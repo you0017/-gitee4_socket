@@ -20,6 +20,8 @@ public class Xunlei {
     //public static volatile Long dlSize = 0l;
     public static AtomicLong dlSize = new AtomicLong(0l);
 
+    private static volatile long fileSizeDownLoaded = 0;
+
     public static void main(String[] args) throws Exception {
         //String url = "http://yun.zfshx.com/uploads/2024/05/07/KpyUw6Pc_smee.7z";
         String url = "http://www.hostbuf.com/downloads/finalshell_install.exe";
@@ -49,7 +51,17 @@ public class Xunlei {
 
         //6.循环创建线程，每个线程要下载自己的部分
         for (int i = 0; i < threadSize; i++) {
-            DownLoadTask task = new DownLoadTask(i, fileSize, threadSize, sizePerThread, url, downloadPath);
+            DownLoadedSizeNotify dlsn = new DownLoadedSizeNotify() {
+                @Override
+                public void notifySize(long size) {
+                    /*synchronized (Xunlei.class){
+                        fileSizeDownLoaded += size;
+                    }*/
+                    //System.out.println("下载的文件总大小:" + size + "字节");
+                    Xunlei.dlSize.addAndGet(size);
+                }
+            };
+            DownLoadTask task = new DownLoadTask(i, fileSize, threadSize, sizePerThread, url, downloadPath, dlsn);
             Thread t = new Thread(task);
             t.start();
         }
@@ -64,6 +76,7 @@ public class Xunlei {
             }
             Thread.sleep(50);
         }
+        System.out.println(fileSizeDownLoaded);
     }
 
     /**
@@ -109,4 +122,11 @@ public class Xunlei {
         return fileSize;
 
     }
+}
+
+/**
+ * 下载的数据量的回调接口
+ */
+interface DownLoadedSizeNotify{
+    public void notifySize(long size);
 }

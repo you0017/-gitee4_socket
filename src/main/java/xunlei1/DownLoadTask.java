@@ -22,16 +22,18 @@ public class DownLoadTask implements Runnable{
     private long sizePerThread;
     private String url;
     private String downloadPath;
+    private DownLoadedSizeNotify dlsn;
 
     private Logger log = Logger.getLogger(DownLoadTask.class.getName());
 
-    public DownLoadTask(int i, long fileSize, int threadSize, long sizePerThread, String url, String downloadPath) {
+    public DownLoadTask(int i, long fileSize, int threadSize, long sizePerThread, String url, String downloadPath, DownLoadedSizeNotify dlsn) {
         this.i = i;
         this.fileSize = fileSize;
         this.threadSize = threadSize;
         this.sizePerThread = sizePerThread;
         this.url = url;
         this.downloadPath = downloadPath;
+        this.dlsn = dlsn;
     }
 
     @Override
@@ -62,8 +64,11 @@ public class DownLoadTask implements Runnable{
             while ((len = bis.read(bs)) != -1) {
                 raf.write(bs, 0, len);
                 //log.info("线程" + i + "下载了" + len + "字节");
-                Xunlei.dlSize.addAndGet(len);
+                //Xunlei.dlSize.addAndGet(len);
                 //System.out.println(Xunlei.dlSize);
+                if (dlsn!=null){
+                    dlsn.notifySize(len);
+                }
             }
             System.out.println();
             log.info("线程" + i + "下载完成");
