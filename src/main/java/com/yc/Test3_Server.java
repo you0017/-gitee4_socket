@@ -1,6 +1,7 @@
 package com.yc;
 
 import com.yc.util.Weather;
+import com.yc.util.WeatherUtil;
 import org.apache.log4j.Logger;
 
 import java.io.*;
@@ -54,7 +55,7 @@ public class Test3_Server {
                  BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(oos, "UTF-8"))) {
 
 
-                String weather = Weather.weather(s.getInetAddress().getHostAddress());
+                String weather = WeatherUtil.weather("衡阳");
                 writer.write(weather);
                 writer.flush();
             } catch (Exception e) {
