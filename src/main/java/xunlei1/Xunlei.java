@@ -11,6 +11,7 @@ import java.net.URLConnection;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class Xunlei {
@@ -18,7 +19,7 @@ public class Xunlei {
 
     //volatile->修饰属性
     //public static volatile Long dlSize = 0l;
-    public static AtomicLong dlSize = new AtomicLong(0l);
+    //public static AtomicLong dlSize = new AtomicLong(0l);
 
     private static volatile long fileSizeDownLoaded = 0;
 
@@ -49,23 +50,30 @@ public class Xunlei {
         long sizePerThread = getSizePerThread(fileSize, threadSize);
         log.info("每个线程要下载的字节数：" + sizePerThread);
 
+        long start = System.currentTimeMillis();
+        List<Thread> threads = new java.util.ArrayList<>();
+
         //6.循环创建线程，每个线程要下载自己的部分
         for (int i = 0; i < threadSize; i++) {
             DownLoadedSizeNotify dlsn = new DownLoadedSizeNotify() {
                 @Override
                 public void notifySize(long size) {
-                    /*synchronized (Xunlei.class){
+                    synchronized (Xunlei.class){
                         fileSizeDownLoaded += size;
-                    }*/
-                    //System.out.println("下载的文件总大小:" + size + "字节");
-                    Xunlei.dlSize.addAndGet(size);
+                    }
+                    System.out.print("\r"+"下载进度：" + fileSizeDownLoaded + "，" + (fileSizeDownLoaded * 100 / fileSize) + "%");
+                    //Xunlei.dlSize.addAndGet(size);
                 }
             };
             DownLoadTask task = new DownLoadTask(i, fileSize, threadSize, sizePerThread, url, downloadPath, dlsn);
             Thread t = new Thread(task);
             t.start();
+            threads.add(t);
         }
-        while (true) {
+        for (Thread t : threads) {
+            t.join();
+        }
+        /*while (true) {
             if (dlSize.get() == fileSize) {
                 log.info("下载完成");
                 System.out.println("总大小:"+dlSize.get());
@@ -75,8 +83,10 @@ public class Xunlei {
                 System.out.print("\r"+"下载进度：" + dlSize.get() + "，" + (dlSize.get() * 100 / fileSize) + "%");
             }
             Thread.sleep(50);
-        }
+        }*/
         System.out.println(fileSizeDownLoaded);
+
+        System.out.println("耗时："+(System.currentTimeMillis()-start));
     }
 
     /**
