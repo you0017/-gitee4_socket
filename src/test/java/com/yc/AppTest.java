@@ -1,5 +1,6 @@
 package com.yc;
 
+import RSS.bean.RSSDataCapturerTest;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -25,7 +26,10 @@ public class AppTest
      */
     public static Test suite()
     {
-        return new TestSuite( AppTest.class );
+        //测试套件：一个测试套件可以包含多个测试用例，一个测试用例通常是对应一个类或模块
+        TestSuite suite = new TestSuite(AppTest.class);
+        suite.addTest(new RSSDataCapturerTest());
+        return suite;
     }
 
     /**
