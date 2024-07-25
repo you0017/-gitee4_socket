@@ -135,9 +135,6 @@ public class YcHttpServletRequest implements YcServletRequest {
             for (int i = 0; i < length; i++) {
                 sb.append((char)bs[i]);
             }
-            /*while ((length = this.iis.read(bs)) != -1){
-                sb.append(new String(bs,0,length));
-            }*/
         }catch (Exception e){
             log.error("读取请求信息异常");
             e.printStackTrace();

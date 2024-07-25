@@ -33,7 +33,7 @@ public class Xunlei {
         //2.新文件保存的位置
         String newFileName = geFileName(url);
         log.info("新文件名：" + newFileName);
-        String savePath = "F:\\baiduiwet";
+        String savePath = "F:\\baiduwet";
         String downloadPath = savePath + File.separator + newFileName;
         log.info("下载路径：" + downloadPath);
 
