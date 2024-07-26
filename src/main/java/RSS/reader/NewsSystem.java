@@ -26,8 +26,8 @@ public class NewsSystem implements Runnable{
     public void run() {
         //消费任务
         NewsWriterTask writerTask = new NewsWriterTask(buffer);//消费
-        //executor.execute(writerTask);
-        executor.scheduleWithFixedDelay(writerTask,0,1, TimeUnit.MINUTES);
+        executor.execute(writerTask);
+        //executor.scheduleWithFixedDelay(writerTask,0,30, TimeUnit.SECONDS);
         //生产线程
         Path file = Paths.get(sourcesPath);
         try (BufferedReader reader = Files.newBufferedReader(file)){
@@ -39,7 +39,7 @@ public class NewsSystem implements Runnable{
                     String url = strs[1];
                     //创建生产者的任务
                     NewsProductTask productTask = new NewsProductTask(rssName,url,buffer);
-                    executor.scheduleWithFixedDelay(productTask,0,1, TimeUnit.MINUTES);
+                    executor.scheduleWithFixedDelay(productTask,0,30, TimeUnit.SECONDS);
                 }
             }
         }catch (Exception e){

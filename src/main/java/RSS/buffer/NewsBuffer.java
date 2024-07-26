@@ -28,7 +28,9 @@ public class NewsBuffer {
 
     public CommonInformationItem get() {
         try {
-            return buffer.take();
+            CommonInformationItem take = buffer.take();
+            //storedItem.remove(take.getId());
+            return take;
         } catch (Exception e){
             e.printStackTrace();
         }
