@@ -121,6 +121,7 @@ public class YcHttpServletRequest implements YcServletRequest {
         this.realPath = System.getProperty("user.dir")+ File.separator+"webapps";
     }
 
+
     /**
      * 从输入流中读取http请求信息
      */

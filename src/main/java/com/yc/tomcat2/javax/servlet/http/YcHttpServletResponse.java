@@ -23,6 +23,7 @@ public class YcHttpServletResponse implements YcServletResponse {
         this.oos = oos;
     }
 
+
     @Override
     public void send() {
         String uri = request.getRequestURI();//  /wowotuan/index.html
